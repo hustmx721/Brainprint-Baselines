@@ -1,0 +1,31 @@
+file_paths:
+  data_path: "/home/lhg/processed_data/ssvep30_filterBank_each_band/normal/"
+  source_file_name: "Day1_combined.hdf"
+  target_file_name: "Day2_combined.hdf"
+  model_save_path: "./models_K_fold"
+  log_path: "./log"
+  cm_save_path: "./confusion_matrix_K_fold"
+  cm_csv_save_path: "./confusion_matrix_csv_K_fold"
+  file_save_name: "My_normal_use_paramanager_1"
+
+hyperparameters:
+  learning_rate: 0.001
+  batch_size: 64
+  max_epochs: 200
+  patience: 20
+  initial_weight_decay: 1e-4
+
+network_parameters:
+  input_size: [1, 33, 600]
+  num_class: 30
+  dropout_rate: 0.5
+
+
+grid_search_params:
+  out_channels: [64] 
+  D: [2]
+  eeg_groups: [1]
+  sa_groups: [1]
+
+runtime:
+  device: "cuda:0"

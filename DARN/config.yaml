@@ -1,0 +1,29 @@
+file_paths:
+  data_path: "/home/lhg/processed_data/"
+  source_file_name: "Day1.hdf"
+  target_file_name: "Day2.hdf"
+  output_root: "datasetA"  
+  file_save_name: "main_for_datasetA"
+
+hyperparameters:
+  learning_rate: 0.001
+  batch_size: 64
+  max_epochs: 200
+  patience: 20
+  initial_weight_decay: 1e-4
+
+network_parameters:
+  input_size: [1, 20, 600] # dataset A==600 //  dataset B==400
+  num_class: 30
+  dropout_rate: 0.5
+
+
+grid_search_params:
+  out_channels_range: [16, 128, 16]  # [start, end, step] ->  [16, 32, 48, 64, 80, 96, 112, 128]
+  D_range: [1, 8, 1]  # ->  [1, 2, 3, 4, 5, 6, 7, 8]
+  eeg_groups_range: [2, 10, 2]  # ->  [2, 4, 6, 8, 10]
+
+
+
+runtime:
+  device: "cuda:0"
