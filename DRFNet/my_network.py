@@ -4,9 +4,9 @@ import torch.nn.functional as F
 import Module as md
 from feature_extractor import FeatureExtractor
 
-class MyModel(nn.Module):
-    def __init__(self, device, input_size, num_class, dropout_rate, out_channels, D, eeg_groups, sa_groups):
-        super(MyModel, self).__init__()
+class DRFNet(nn.Module):
+    def __init__(self, device, input_size, num_class, dropout_rate=0.5, out_channels=64, D=2, eeg_groups=1, sa_groups=1):
+        super(DRFNet, self).__init__()
         self.device = device
         self.input_size = input_size
         self.num_class = num_class
@@ -43,8 +43,6 @@ class MyModel(nn.Module):
             self.num_class
         ).to(self.device)
 
-        # Classification criterion
-        self.cls_criterion = nn.CrossEntropyLoss()
 
     def calculate_feature_sizes(self, input_size):
         data = torch.ones((1, input_size[0], input_size[1], int(input_size[2]))).to(self.device)
@@ -61,9 +59,8 @@ class MyModel(nn.Module):
         x = F.relu(torch.mul(x, w) - b)
         return x.unsqueeze(-2)
 
-    def forward(self, input_tensor, label_src):
+    def forward(self, input_tensor):
         rele= self.feature_extractor.forward(input_tensor)
         globalf = self.global_enc(rele)
         logits = self.classifier(globalf)
-        loss_class = self.cls_criterion(logits, label_src)
-        return loss_class
+        return logits

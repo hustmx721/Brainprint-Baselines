@@ -11,7 +11,7 @@ from sklearn.metrics import davies_bouldin_score
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 class DARNNet(nn.Module):
-    def __init__(self, device, input_size, num_class, dropout_rate=0.5, out_channels=64, D=4, eeg_groups=4):
+    def __init__(self, device, input_size, num_class, dropout_rate=0.5, out_channels=64, D=2, eeg_groups=1):
         super(DARNNet, self).__init__()
         self.device = device
         self.input_size = input_size
