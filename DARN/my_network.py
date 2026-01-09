@@ -1,3 +1,5 @@
+import sys
+sys.path.append("/mnt/data1/tyl/UserID/baseline/frameworks/DARN")
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -43,7 +45,7 @@ class DARNNet(nn.Module):
         out = self.feature_extractor(input)
         global_a = self.global_enc(out)
         logits = self.classifier(global_a)
-        return logits
+        return global_a, logits
 
 
 

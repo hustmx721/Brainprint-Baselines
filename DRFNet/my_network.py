@@ -1,7 +1,9 @@
+import sys
+sys.path.append("/mnt/data1/tyl/UserID/baseline/frameworks/DRFNet")
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import Module as md
+import baseline.frameworks.DRFNet.myModule as md
 from feature_extractor import FeatureExtractor
 
 class DRFNet(nn.Module):
@@ -63,4 +65,4 @@ class DRFNet(nn.Module):
         rele= self.feature_extractor.forward(input_tensor)
         globalf = self.global_enc(rele)
         logits = self.classifier(globalf)
-        return logits
+        return globalf, logits

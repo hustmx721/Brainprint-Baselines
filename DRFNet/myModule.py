@@ -1,3 +1,6 @@
+import sys, os
+sys.path.append("/mnt/data1/tyl/UserID/baseline/frameworks/DRFNet")
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

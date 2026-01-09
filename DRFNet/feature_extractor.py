@@ -1,7 +1,10 @@
+import sys, os
+sys.path.append("/mnt/data1/tyl/UserID/baseline/frameworks/DRFNet")
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import Module as md
+import baseline.frameworks.DRFNet.myModule as md
 
 class FeatureExtractor(nn.Module):
     def __init__(self, input_size, out_channels, dropout_rate, D, eeg_groups, sa_groups):

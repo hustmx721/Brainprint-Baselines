@@ -1,17 +1,15 @@
+import sys, os
+sys.path.append("/mnt/data1/tyl/UserID/baseline/frameworks/MCGP")
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import torch
 import torch.nn as nn
 from torch.autograd import Function
 import math
 import torch.nn.functional as F
 import torchinfo
-from utils import *
+from baseline.frameworks.MCGP.utils import *
 
 EPS = 1e-30
-use_cuda = torch.cuda.is_available()
-print('use_cuda:', use_cuda)
-device = torch.device('cuda:0' if use_cuda else 'cpu')
-
-
 
 class GraphConvolution(nn.Module):
     def __init__(self, in_features, out_features, bias=True):
@@ -55,7 +53,7 @@ class MCGPnet(nn.Module):
     def apply_bn(self, x):
         ''' Batch normalization of 3D tensor x
         '''
-        bn_module = torch.nn.BatchNorm1d(x.size()[1]).to(device)
+        bn_module = torch.nn.BatchNorm1d(x.size()[1]).to(self.device)
         return bn_module(x)
 
     def temporal_learner(self, in_chan, out_chan, kernel, pool, pool_step_rate):
@@ -64,10 +62,11 @@ class MCGPnet(nn.Module):
             PowerLayer(dim=-1, length=pool, step=int(pool_step_rate * pool))
         )
 
-    def __init__(self, num_class, input_size, sampling_rate, num_T, out_graph, out_graph_, dropout_rate, pool,
-                 pool_step_rate):
+    def __init__(self, device, num_class, input_size, sampling_rate, num_T=16, out_graph=10, out_graph_=10, dropout_rate=0.25, pool=4,
+                 pool_step_rate=0.25):
         super(MCGPnet, self).__init__()
-
+        
+        self.device = device
         self.window = [0.1, 0.2, 0.5]
         self.pool = pool
         self.channel = input_size[1]
@@ -182,7 +181,8 @@ class MCGPnet(nn.Module):
         pseudo_label = nn.functional.relu(mid_out)
         pseudo_label = self.fc3(pseudo_label)
         pseudo_label = self.apply_bn(pseudo_label)
-        return pseudo_label, link_loss, ent_loss
+        # return pseudo_label, link_loss, ent_loss
+        return output, pseudo_label
 
     def get_size_temporal(self, input_size):
         # input_size: frequency x channel x data point
@@ -212,7 +212,7 @@ class MCGPnet(nn.Module):
         num_nodes = adj.shape[-1]
         adj = F.relu(adj * (self.global_adj + self.global_adj.transpose(1, 0)))
         if self_loop:
-            adj = adj + torch.eye(num_nodes).to(device)
+            adj = adj + torch.eye(num_nodes).to(self.device)
         rowsum = torch.sum(adj, dim=-1)
         mask = torch.zeros_like(rowsum)
         mask[rowsum == 0] = 1
